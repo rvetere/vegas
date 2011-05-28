@@ -32,6 +32,7 @@
 		$loading 	= $( '<div />' ).addClass( 'vegas-loading' ),
 		$current,
 		timer,
+		backgrounds = [],
 		step = 0,
 		methods = {
 
@@ -145,19 +146,31 @@
 		// Start slideshow
 		slideshow: function( settings ) {
 			var options = {
+				step:		 null,
 				delay:		 5000,
 				backgrounds: []
 			};
 			$.extend( options, settings );
 
+			if ( options.backgrounds.length ) {
+				if ( options.backgrounds != backgrounds ) {
+					step = 0;
+				}
+				backgrounds = options.backgrounds;
+			}
+
+			if ( options.step ) {
+				step = options.step;
+			}
+
 			clearInterval( timer );
 
 			var doSlideshow = function() {
-				$.vegas( options.backgrounds[ step++ ] );
-
-				if ( step >= options.backgrounds.length ) {
+				if ( step >= backgrounds.length ) {
 					step = 0;
 				}
+				
+				$.vegas( backgrounds[ step++ ] );
 			}
 
 			doSlideshow();
@@ -189,7 +202,7 @@
 				return $overlay.get(0);
 			}
 			if ( what == 'step' ) {
-				return step;
+				return step - 1;
 			}
 		}
 	}
