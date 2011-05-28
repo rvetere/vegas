@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // Vegas - jQuery plugin 
 // Add awesome fullscreen backgrounds to your webpages.
-// v 1.x beta
+// v 1.1 beta
 // Dual licensed under the MIT and GPL licenses.
 // http://vegas.jaysalvat.com/
 // ----------------------------------------------------------------------------
@@ -33,7 +33,6 @@
 		$current,
 		timer,
 		isPaused,
-		delay = 5000,
 		backgrounds = [],
 		step = 0,
 		methods = {
@@ -48,8 +47,8 @@
 				loading:	true,
 				load:		function() {},
 				complete: 	function() {}
-			};
-			$.extend( true, options, settings );
+			}
+			$.extend( options, $.vegas.defaults.background, settings );
 
 			if ( options.loading ) {
 				loading();		
@@ -122,7 +121,7 @@
 				src:		null,
 				opacity:	null
 			};
-			$.extend( options, settings );
+			$.extend( options, $.vegas.defaults.overlay, settings );
 
 			$overlay.remove();
 
@@ -153,19 +152,14 @@
 		// Start slideshow
 		slideshow: function( settings, keepPause ) {
 			var options = {
-				step:		 step,
-				delay:		 delay,
-				backgrounds: backgrounds
+				step:			step,
+				delay:			5000,
+				backgrounds:	backgrounds
 			};
-			$.extend( options, settings );
+			options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
 
-			if ( options.backgrounds != backgrounds ) {
-				step = 0;
-			}
-			
 			backgrounds = options.backgrounds;
-			delay 		= options.delay;
-			step 		= options.step;
+			step = options.step;
 
 			clearInterval( timer );
 			
@@ -192,7 +186,7 @@
 			}
 			
 			if ( !isPaused ) {
-				timer = setInterval( doSlideshow, delay );
+				timer = setInterval( doSlideshow, options.delay );
 			}
 
 			return $.vegas;
@@ -326,4 +320,25 @@
 			$.error( 'Method ' +  method + ' does not exist' );
 		}
 	};
+	
+	$.vegas.defaults = {
+		background: {
+			// src:			string
+			// align:		string/int
+			// valign:		string/int
+			// fade:		int
+			// loading:		bool
+			// load:		function
+			// complete:	function
+		},
+		slideshow: {
+			// step:		int
+			// delay:		int
+			// backgrounds:	array
+		},
+		overlay: {
+			// src:			string
+			// opacity:		float
+		}
+	}
 })( jQuery );
