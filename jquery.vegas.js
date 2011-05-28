@@ -159,6 +159,10 @@
             };
             options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
 
+            if ( options.backgrounds != backgrounds ) {
+                options.step = 0;
+            }
+
             backgrounds = options.backgrounds;
             step = options.step;
 
