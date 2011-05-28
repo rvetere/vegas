@@ -45,12 +45,15 @@
 				align: 		'center',
 				valign:		'center',
 				fade:		0,
+				loading:	true,
 				load:		function() {},
 				complete: 	function() {}
 			};
 			$.extend( true, options, settings );
 
-			loading();
+			if ( options.loading ) {
+				loading();		
+			}
 
 			$new = $background.clone();
 			$new.css( {
@@ -87,7 +90,9 @@
 
 					resize( $current, options );
 
-					loaded();
+					if ( options.loading ) {
+						loaded();						
+					}
 
 					$( 'body' ).trigger( 'backgroundload', [ $current.get(0) ] );
 					options.load.apply( $current.get(0) );
