@@ -155,12 +155,17 @@
             var options = {
                 step:           step,
                 delay:          5000,
+                preload:        true,
                 backgrounds:    backgrounds
             };
             options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
 
             if ( options.backgrounds != backgrounds ) {
                 options.step = 0;
+                
+                if ( options.preload ) {
+                    $.vegas( 'preload', options.backgrounds )
+                }
             }
 
             backgrounds = options.backgrounds;
@@ -246,6 +251,15 @@
             if ( what == 'isPaused' ) {
                 return isPaused;
             }
+        },
+        
+        // Preload an array of backgrounds
+        preload: function( backgrounds ) {
+            for( var i in backgrounds ) {
+                if ( backgrounds[ i ].src ) {
+                    $('<img src="' + backgrounds[ i ].src + '">');                    
+                }
+            }    
         }
     }
 
@@ -348,6 +362,7 @@
             // step:        int
             // delay:       int
             // backgrounds: array
+            // preload:     bool
         },
         overlay: {
             // src:         string
