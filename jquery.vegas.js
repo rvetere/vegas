@@ -73,15 +73,15 @@
                                 $('.vegas-background')
                                     .not(this)
                                         .remove();
-                                $( 'body' ).trigger( 'backgroundcomplete', [ this ] );
-                                options.complete.apply( $new );
+                                $( 'body' ).trigger( 'vegasComplete', [ this, step - 1 ] );
+                                options.complete.apply( $new, [ step - 1 ] );
                             });
                     } else {
                         $new.hide()
                             .prependTo( 'body' )
                             .fadeIn( options.fade, function() {
-                                $( 'body' ).trigger( 'backgroundcomplete', [ this ] );
-                                options.complete.apply( this );    
+                                $( 'body' ).trigger( 'vegasComplete', [ this, step - 1 ] );
+                                options.complete.apply( this, [ step - 1 ] );    
                             });
                     }
 
@@ -93,7 +93,7 @@
                         loaded();
                     }
 
-                    $( 'body' ).trigger( 'backgroundload', [ $current.get(0) ] );
+                    $( 'body' ).trigger( 'vegasLoad', [ $current.get(0), step ] );
                     options.load.apply( $current.get(0) );
                 })
                 .attr( 'src', options.src );
@@ -182,7 +182,7 @@
                     step = backgrounds.length - 1;
                 }
 
-                if ( step >= backgrounds.length || !backgrounds[ step ] ) {
+                if ( step >= backgrounds.length || !backgrounds[ step - 1 ] ) {
                     step = 0;
                 }
 
@@ -193,6 +193,8 @@
 
             if ( !keepPause ) {
                 isPaused = false;
+                
+                $( 'body' ).trigger( 'vegasSlideshow', [ $current.get(0), step - 1 ] );
             }
 
             if ( !isPaused ) {
@@ -204,32 +206,55 @@
 
         // Next background in the current slideshow
         next: function() {
-            return $.vegas( 'slideshow', { step: step }, true );
+            var from = step;
+            
+            $.vegas( 'slideshow', { step: step }, true );
+            
+            $( 'body' ).trigger( 'vegasNext', [ $current.get(0), step - 1, from - 1 ] );
+            
+            return $.vegas;
         },
 
         // Previous background in the current slideshow
         previous: function() {
-            return $.vegas( 'slideshow', { step: step-2 }, true );
+            var from = step;
+            
+            $.vegas( 'slideshow', { step: step-2 }, true );
+            
+            $( 'body' ).trigger( 'vegasPrevious', [ $current.get(0), step - 1, from - 1 ] );
+            
+            return $.vegas;
         },
 
         // Jump to a specific background in the current slideshow
         jump: function( s ) {
-            return $.vegas( 'slideshow', { step: s }, true );
+            var from = step;
+            
+            $.vegas( 'slideshow', { step: s }, true );
+
+            $( 'body' ).trigger( 'vegasJump', [ $current.get(0), step - 1, from - 1 ] );
+            
+            return $.vegas;
         },
 
         // Stop slideshow
         stop: function() {
+            var from = step;
             step = 0;
             isPaused = null;
             clearInterval( timer );
 
+            $( 'body' ).trigger( 'vegasStop', [ $current.get(0), from - 1 ] );
+
             return $.vegas;
         },
 
-        // Pause SlideShow
+        // Pause slideShow
         pause: function() {
             isPaused = true;
             clearInterval( timer );
+
+           $( 'body' ).trigger( 'vegasPause', [ $current.get(0), step - 1 ] );
 
             return $.vegas;
         },
