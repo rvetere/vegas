@@ -225,12 +225,15 @@
 			if ( what == null || what == 'background' ) {
 				return $current.get(0);
 			}
+			
 			if ( what == 'overlay' ) {
 				return $overlay.get(0);
 			}
+			
 			if ( what == 'step' ) {
 				return step - 1;
 			}
+			
 			if ( what == 'isPaused' ) {
 				return isPaused;
 			}
@@ -262,32 +265,30 @@
 			newWidth = ww;
 			newHeight = ww * ri;
 		}
-
+		
 		properties = {
 			'width':	newWidth + 'px',
-			'height': 	newHeight + 'px',
-			'left':		( ww - newWidth ) / 2 + 'px',
-			'top':		( wh - newHeight ) / 2 + 'px'
-		}
-		
-		if ( options.valign == 'top' ) {
-			properties[ 'top' ] 	= 0;
-			properties[ 'bottom' ] 	= 'auto';
+			'height': 	newHeight + 'px'
 		}
 
-		if ( options.valign == 'bottom' ) {
-			properties[ 'top' ] 	= 'auto';
+		if ( parseInt( options.valign ) != 'NaN' ) {
+			properties[ 'top' ] = ( 0 - ( newHeight - wh ) / 100 * parseInt( options.valign ) ) + 'px';
+		} else if ( options.valign == 'top' ) {
+			properties[ 'top' ]		= 0;
+		} else if ( options.valign == 'bottom' ) {
 			properties[ 'bottom' ] 	= 0;
-		}
+		} else {
+			properties[ 'top' ] = ( wh - newHeight ) / 2;
+		} 
 
-		if ( options.align == 'left' ) {
+		if ( parseInt( options.align ) != 'NaN' ) {
+			properties[ 'left' ] = ( 0 - ( newWidth - ww ) / 100 * parseInt( options.align ) ) + 'px';
+		} else if ( options.align == 'left' ) {
 			properties[ 'left' ] 	= 0;
-			properties[ 'right' ] 	= 'auto';
-		}
-
-		if ( options.align == 'right' ) {
-			properties[ 'left' ] 	= 'auto';
-			properties[ 'right' ] 	= 0;				
+		} else if ( options.align == 'right' ) {
+			properties[ 'right' ] 	= 0;
+		} else {
+			properties[ 'left' ] = ( ww - newWidth ) / 2 ;	
 		}
 
 		$img.css( properties );
