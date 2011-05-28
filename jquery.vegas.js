@@ -27,318 +27,327 @@
 // THE SOFTWARE.
 // ----------------------------------------------------------------------------
 ( function( $ ){
-	var $background = $( '<img />' ).addClass( 'vegas-background' ),
-		$overlay 	= $( '<div />' ).addClass( 'vegas-overlay' ),
-		$loading 	= $( '<div />' ).addClass( 'vegas-loading' ),
-		$current,
-		timer,
-		isPaused,
-		backgrounds = [],
-		step = 0,
-		methods = {
+    var $background = $( '<img />' ).addClass( 'vegas-background' ),
+        $overlay    = $( '<div />' ).addClass( 'vegas-overlay' ),
+        $loading    = $( '<div />' ).addClass( 'vegas-loading' ),
+        $current,
+        timer,
+        isPaused,
+        backgrounds = [],
+        step        = 0,
+        methods     = {
 
-		// Init plugin
-		init : function( settings ) {
-			var options = {
-				src:		getBackground(),
-				align: 		'center',
-				valign:		'center',
-				fade:		0,
-				loading:	true,
-				load:		function() {},
-				complete: 	function() {}
-			}
-			$.extend( options, $.vegas.defaults.background, settings );
+        // Init plugin
+        init : function( settings ) {
+            var options = {
+                src:        getBackground(),
+                align:      'center',
+                valign:     'center',
+                fade:       0,
+                loading:    true,
+                load:       function() {},
+                complete:   function() {}
+            }
+            $.extend( options, $.vegas.defaults.background, settings );
 
-			if ( options.loading ) {
-				loading();		
-			}
+            if ( options.loading ) {
+                loading();
+            }
 
-			$new = $background.clone();
-			$new.css( {
-					'position':	'fixed',
-					'left':		'0px',
-					'top':		'0px'
-				})
-				.load( function() {
-					$( window ).bind( 'resize.vegas', function( e ) {
-						resize( $new, options );
-					});
+            $new = $background.clone();
+            $new.css( {
+                    'position': 'fixed',
+                    'left':     '0px',
+                    'top':      '0px'
+                })
+                .load( function() {
+                    $( window ).bind( 'resize.vegas', function( e ) {
+                        resize( $new, options );
+                    });
 
-					if ( $current ) {
-						$current.stop();
-						$new.hide()
-							.insertAfter( $current )
-							.fadeIn( options.fade, function() {
-								$('.vegas-background')
-									.not(this)
-										.remove();
-								$( 'body' ).trigger( 'backgroundcomplete', [ this ] );
-								options.complete.apply( $new );
-							});
-					} else {
-						$new.hide()
-							.prependTo( 'body' )
-							.fadeIn( options.fade, function() {
-								$( 'body' ).trigger( 'backgroundcomplete', [ this ] );
-								options.complete.apply( this );	
-							});
-					}
+                    if ( $current ) {
+                        $current.stop();
+                        $new.hide()
+                            .insertAfter( $current )
+                            .fadeIn( options.fade, function() {
+                                $('.vegas-background')
+                                    .not(this)
+                                        .remove();
+                                $( 'body' ).trigger( 'backgroundcomplete', [ this ] );
+                                options.complete.apply( $new );
+                            });
+                    } else {
+                        $new.hide()
+                            .prependTo( 'body' )
+                            .fadeIn( options.fade, function() {
+                                $( 'body' ).trigger( 'backgroundcomplete', [ this ] );
+                                options.complete.apply( this );    
+                            });
+                    }
 
-					$current = $new;
+                    $current = $new;
 
-					resize( $current, options );
+                    resize( $current, options );
 
-					if ( options.loading ) {
-						loaded();						
-					}
+                    if ( options.loading ) {
+                        loaded();
+                    }
 
-					$( 'body' ).trigger( 'backgroundload', [ $current.get(0) ] );
-					options.load.apply( $current.get(0) );
-				})
-				.attr( 'src', options.src );
+                    $( 'body' ).trigger( 'backgroundload', [ $current.get(0) ] );
+                    options.load.apply( $current.get(0) );
+                })
+                .attr( 'src', options.src );
 
-			return $.vegas;
-		},
+            return $.vegas;
+        },
 
-		// Destroy background
-		destroy: function( what ) {
-			if ( !what || what == 'background') {
-				$( '.vegas-background, .vegas-loading' ).remove();
-				$( window ).unbind( 'resize.vegas' );
-				$current = null;
-			}
+        // Destroy background and/or overlay
+        destroy: function( what ) {
+            if ( !what || what == 'background') {
+                $( '.vegas-background, .vegas-loading' ).remove();
+                $( window ).unbind( 'resize.vegas' );
+                $current = null;
+            }
 
-			if ( !what || what == 'overlay') {
-				$( '.vegas-overlay' ).remove();
-			}
+            if ( !what || what == 'overlay') {
+                $( '.vegas-overlay' ).remove();
+            }
 
-			return $.vegas;
-		},
+            return $.vegas;
+        },
 
-		overlay: function( settings ) {
-			var options = {
-				src:		null,
-				opacity:	null
-			};
-			$.extend( options, $.vegas.defaults.overlay, settings );
+        // Display the pattern overlay
+        overlay: function( settings ) {
+            var options = {
+                src:        null,
+                opacity:    null
+            };
+            $.extend( options, $.vegas.defaults.overlay, settings );
 
-			$overlay.remove();
+            $overlay.remove();
 
-			$overlay
-				.css( {
-					'margin':	'0',
-					'padding':	'0',
-					'position':	'fixed',
-					'left':		'0px',
-					'top':		'0px',
-					'width':	'100%',
-					'height':	'100%'
-			});
+            $overlay
+                .css( {
+                    'margin':   '0',
+                    'padding':  '0',
+                    'position': 'fixed',
+                    'left':     '0px',
+                    'top':      '0px',
+                    'width':    '100%',
+                    'height':   '100%'
+            });
 
-			if ( options.src ) {
-				$overlay.css( 'backgroundImage', 'url(' + options.src + ')' );
-			}
+            if ( options.src ) {
+                $overlay.css( 'backgroundImage', 'url(' + options.src + ')' );
+            }
 
-			if ( options.opacity ) {
-				$overlay.css( 'opacity', options.opacity );
-			}
+            if ( options.opacity ) {
+                $overlay.css( 'opacity', options.opacity );
+            }
 
-			$overlay.prependTo( 'body' );
-			
-			return $.vegas;
-		},
+            $overlay.prependTo( 'body' );
 
-		// Start slideshow
-		slideshow: function( settings, keepPause ) {
-			var options = {
-				step:			step,
-				delay:			5000,
-				backgrounds:	backgrounds
-			};
-			options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
+            return $.vegas;
+        },
 
-			backgrounds = options.backgrounds;
-			step = options.step;
+        // Start/restart slideshow
+        slideshow: function( settings, keepPause ) {
+            var options = {
+                step:           step,
+                delay:          5000,
+                backgrounds:    backgrounds
+            };
+            options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
 
-			clearInterval( timer );
-			
-			if ( !backgrounds.length ) {
-				return;
-			}
-				
-			var doSlideshow = function() {
-				if ( step < 0 ) {
-					step = backgrounds.length - 1;
-				}
-				
-				if ( step >= backgrounds.length || !backgrounds[ step ] ) {
-					step = 0;
-				}
-				
-				$.vegas( backgrounds[ step++ ] );
-			}
+            backgrounds = options.backgrounds;
+            step = options.step;
 
-			doSlideshow();
-			
-			if ( !keepPause ) {
-				isPaused = false;
-			}
-			
-			if ( !isPaused ) {
-				timer = setInterval( doSlideshow, options.delay );
-			}
+            clearInterval( timer );
 
-			return $.vegas;
-		},
+            if ( !backgrounds.length ) {
+                return;
+            }
 
-		// Next background of a slideshow
-		next: function() {
-			return $.vegas( 'slideshow', { step: step }, true );
-		},
+            var doSlideshow = function() {
+                if ( step < 0 ) {
+                    step = backgrounds.length - 1;
+                }
 
-		// Previous background of a slideshow
-		previous: function() {
-			return $.vegas( 'slideshow', { step: step-2 }, true );
-		},
+                if ( step >= backgrounds.length || !backgrounds[ step ] ) {
+                    step = 0;
+                }
 
-		// Stop slideshow
-		stop: function() {
-			isPaused = null;
-			step = 0;
-			clearInterval( timer );
+                $.vegas( backgrounds[ step++ ] );
+            }
 
-			return $.vegas;
-		},
+            doSlideshow();
 
-		// Pause SlideShow
-		pause: function() {
-			isPaused = true;
-			clearInterval( timer );
+            if ( !keepPause ) {
+                isPaused = false;
+            }
 
-			return $.vegas;
-		},
-		
-		// Get some useful values or objects
-		get: function( what ) {
-			if ( what == null || what == 'background' ) {
-				return $current.get(0);
-			}
-			
-			if ( what == 'overlay' ) {
-				return $overlay.get(0);
-			}
-			
-			if ( what == 'step' ) {
-				return step - 1;
-			}
-			
-			if ( what == 'isPaused' ) {
-				return isPaused;
-			}
-		}
-	}
+            if ( !isPaused ) {
+                timer = setInterval( doSlideshow, options.delay );
+            }
 
-	// Resize the background
-	function resize( $img, settings ) {	
-		var options =  {
-			align: 	'center',
-			valign:	'center'
-		}
-		$.extend( options, settings );
+            return $.vegas;
+        },
 
-		var ww = $( window ).width(),
-			wh = $( window ).height(),
-			iw = $img.width(),
-			ih = $img.height(),
-			rw = wh / ww,
-			ri = ih / iw,
-			newWidth, newHeight,
-			newLeft, newTop,
-			properties;
+        // Next background in the current slideshow
+        next: function() {
+            return $.vegas( 'slideshow', { step: step }, true );
+        },
 
-		if ( rw > ri ) {
-			newWidth = wh / ri;
-			newHeight = wh;
-		} else {
-			newWidth = ww;
-			newHeight = ww * ri;
-		}
-		
-		properties = {
-			'width':	newWidth + 'px',
-			'height': 	newHeight + 'px'
-		}
+        // Previous background in the current slideshow
+        previous: function() {
+            return $.vegas( 'slideshow', { step: step-2 }, true );
+        },
 
-		if ( parseInt( options.valign ) != 'NaN' ) {
-			properties[ 'top' ] = ( 0 - ( newHeight - wh ) / 100 * parseInt( options.valign ) ) + 'px';
-		} else if ( options.valign == 'top' ) {
-			properties[ 'top' ]		= 0;
-		} else if ( options.valign == 'bottom' ) {
-			properties[ 'bottom' ] 	= 0;
-		} else {
-			properties[ 'top' ] = ( wh - newHeight ) / 2;
-		} 
+        // Jump to a specific background in the current slideshow
+        jump: function( s ) {
+            return $.vegas( 'slideshow', { step: s }, true );
+        },
 
-		if ( parseInt( options.align ) != 'NaN' ) {
-			properties[ 'left' ] = ( 0 - ( newWidth - ww ) / 100 * parseInt( options.align ) ) + 'px';
-		} else if ( options.align == 'left' ) {
-			properties[ 'left' ] 	= 0;
-		} else if ( options.align == 'right' ) {
-			properties[ 'right' ] 	= 0;
-		} else {
-			properties[ 'left' ] = ( ww - newWidth ) / 2 ;	
-		}
+        // Stop slideshow
+        stop: function() {
+            step = 0;
+            isPaused = null;
+            clearInterval( timer );
 
-		$img.css( properties );
-	}
+            return $.vegas;
+        },
 
-	function loading() {
-		$loading.prependTo( 'body' ).fadeIn();
-	}
+        // Pause SlideShow
+        pause: function() {
+            isPaused = true;
+            clearInterval( timer );
 
-	function loaded() {
-		$loading.fadeOut( 'fast', function() {
-			$( this ).remove();
-		});
-	}
+            return $.vegas;
+        },
 
-	// Get the background image from the body
-	function getBackground() {
-		if ( $( 'body' ).css( 'backgroundImage' ) ) {
-			return $( 'body' ).css( 'backgroundImage' ).replace( /url\("?(.*?)"?\)/i, '$1' );
-		}
-	}
+        // Get some useful values or objects
+        get: function( what ) {
+            if ( what == null || what == 'background' ) {
+                return $current.get(0);
+            }
 
-	// The plugin
-	$.vegas = function( method ) {
-		if ( methods[ method ] ) {
-			return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
-		} else if ( typeof method === 'object' || !method ) {
-			return methods.init.apply( this, arguments );
-		} else {
-			$.error( 'Method ' +  method + ' does not exist' );
-		}
-	};
-	
-	$.vegas.defaults = {
-		background: {
-			// src:			string
-			// align:		string/int
-			// valign:		string/int
-			// fade:		int
-			// loading:		bool
-			// load:		function
-			// complete:	function
-		},
-		slideshow: {
-			// step:		int
-			// delay:		int
-			// backgrounds:	array
-		},
-		overlay: {
-			// src:			string
-			// opacity:		float
-		}
-	}
+            if ( what == 'overlay' ) {
+                return $overlay.get(0);
+            }
+
+            if ( what == 'step' ) {
+                return step - 1;
+            }
+
+            if ( what == 'isPaused' ) {
+                return isPaused;
+            }
+        }
+    }
+
+    // Resize the background
+    function resize( $img, settings ) {
+        var options =  {
+            align:     'center',
+            valign:    'center'
+        }
+        $.extend( options, settings );
+
+        var ww = $( window ).width(),
+            wh = $( window ).height(),
+            iw = $img.width(),
+            ih = $img.height(),
+            rw = wh / ww,
+            ri = ih / iw,
+            newWidth, newHeight,
+            newLeft, newTop,
+            properties;
+
+        if ( rw > ri ) {
+            newWidth    = wh / ri;
+            newHeight   = wh;
+        } else {
+            newWidth    = ww;
+            newHeight   = ww * ri;
+        }
+
+        properties = {
+            'width':    newWidth + 'px',
+            'height':   newHeight + 'px'
+        }
+
+        if ( parseInt( options.valign ) != 'NaN' ) {
+            properties[ 'top' ] = ( 0 - ( newHeight - wh ) / 100 * parseInt( options.valign ) ) + 'px';
+        } else if ( options.valign == 'top' ) {
+            properties[ 'top' ] = 0;
+        } else if ( options.valign == 'bottom' ) {
+            properties[ 'bottom' ] = 0;
+        } else {
+            properties[ 'top' ] = ( wh - newHeight ) / 2;
+        } 
+
+        if ( parseInt( options.align ) != 'NaN' ) {
+            properties[ 'left' ] = ( 0 - ( newWidth - ww ) / 100 * parseInt( options.align ) ) + 'px';
+        } else if ( options.align == 'left' ) {
+            properties[ 'left' ] = 0;
+        } else if ( options.align == 'right' ) {
+            properties[ 'right' ] = 0;
+        } else {
+            properties[ 'left' ] = ( ww - newWidth ) / 2 ;
+        }
+
+        $img.css( properties );
+    }
+
+    // Display the loading indicator
+    function loading() {
+        $loading.prependTo( 'body' ).fadeIn();
+    }
+
+    // Hide the loading indicator
+    function loaded() {
+        $loading.fadeOut( 'fast', function() {
+            $( this ).remove();
+        });
+    }
+
+    // Get the background image from the body
+    function getBackground() {
+        if ( $( 'body' ).css( 'backgroundImage' ) ) {
+            return $( 'body' ).css( 'backgroundImage' ).replace( /url\("?(.*?)"?\)/i, '$1' );
+        }
+    }
+
+    // The plugin
+    $.vegas = function( method ) {
+        if ( methods[ method ] ) {
+            return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
+        } else if ( typeof method === 'object' || !method ) {
+            return methods.init.apply( this, arguments );
+        } else {
+            $.error( 'Method ' +  method + ' does not exist' );
+        }
+    };
+
+    // Global parameters
+    $.vegas.defaults = {
+        background: {
+            // src:         string
+            // align:       string/int
+            // valign:      string/int
+            // fade:        int
+            // loading      bool
+            // load:        function
+            // complete:    function
+        },
+        slideshow: {
+            // step:        int
+            // delay:       int
+            // backgrounds: array
+        },
+        overlay: {
+            // src:         string
+            // opacity:     float
+        }
+    }
 })( jQuery );
