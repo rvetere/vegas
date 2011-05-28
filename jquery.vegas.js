@@ -32,6 +32,7 @@
 		$loading 	= $( '<div />' ).addClass( 'vegas-loading' ),
 		$current,
 		timer,
+		isPaused,
 		delay = 5000,
 		backgrounds = [],
 		step = 0,
@@ -111,7 +112,7 @@
 			return $.vegas;
 		},
 
-		overlay:function( settings ) {
+		overlay: function( settings ) {
 			var options = {
 				src:		null,
 				opacity:	null
@@ -145,7 +146,7 @@
 		},
 
 		// Start slideshow
-		slideshow: function( settings ) {
+		slideshow: function( settings, keepPause ) {
 			var options = {
 				step:		 step,
 				delay:		 delay,
@@ -180,23 +181,31 @@
 			}
 
 			doSlideshow();
-			timer = setInterval( doSlideshow, delay );
+			
+			if ( !keepPause ) {
+				isPaused = false;
+			}
+			
+			if ( !isPaused ) {
+				timer = setInterval( doSlideshow, delay );
+			}
 
 			return $.vegas;
 		},
 
 		// Next background of a slideshow
 		next: function() {
-			return $.vegas( 'slideshow', { step: step } );
+			return $.vegas( 'slideshow', { step: step }, true );
 		},
 
 		// Previous background of a slideshow
 		previous: function() {
-			return $.vegas( 'slideshow', { step: step-2 } );
+			return $.vegas( 'slideshow', { step: step-2 }, true );
 		},
 
 		// Stop slideshow
 		stop: function() {
+			isPaused = null;
 			step = 0;
 			clearInterval( timer );
 
@@ -205,11 +214,13 @@
 
 		// Pause SlideShow
 		pause: function() {
+			isPaused = true;
 			clearInterval( timer );
 
 			return $.vegas;
 		},
 		
+		// Get some useful values or objects
 		get: function( what ) {
 			if ( what == null || what == 'background' ) {
 				return $current.get(0);
@@ -219,6 +230,9 @@
 			}
 			if ( what == 'step' ) {
 				return step - 1;
+			}
+			if ( what == 'isPaused' ) {
+				return isPaused;
 			}
 		}
 	}
