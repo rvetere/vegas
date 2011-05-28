@@ -32,6 +32,7 @@
 		$loading 	= $( '<div />' ).addClass( 'vegas-loading' ),
 		$current,
 		timer,
+		delay = 5000,
 		backgrounds = [],
 		step = 0,
 		methods = {
@@ -146,27 +147,32 @@
 		// Start slideshow
 		slideshow: function( settings ) {
 			var options = {
-				step:		 null,
-				delay:		 5000,
-				backgrounds: []
+				step:		 step,
+				delay:		 delay,
+				backgrounds: backgrounds
 			};
 			$.extend( options, settings );
 
-			if ( options.backgrounds.length ) {
-				if ( options.backgrounds != backgrounds ) {
-					step = 0;
-				}
-				backgrounds = options.backgrounds;
+			if ( options.backgrounds != backgrounds ) {
+				step = 0;
 			}
-
-			if ( options.step ) {
-				step = options.step;
-			}
+			
+			backgrounds = options.backgrounds;
+			delay 		= options.delay;
+			step 		= options.step;
 
 			clearInterval( timer );
-
+			
+			if ( !backgrounds.length ) {
+				return;
+			}
+				
 			var doSlideshow = function() {
-				if ( step >= backgrounds.length ) {
+				if ( step < 0 ) {
+					step = backgrounds.length - 1;
+				}
+				
+				if ( step >= backgrounds.length || !backgrounds[ step ] ) {
 					step = 0;
 				}
 				
@@ -174,13 +180,23 @@
 			}
 
 			doSlideshow();
-			timer = setInterval( doSlideshow, options.delay );
+			timer = setInterval( doSlideshow, delay );
 
 			return $.vegas;
 		},
 
+		// Next background of a slideshow
+		next: function() {
+			return $.vegas( 'slideshow', { step: step } );
+		},
+
+		// Previous background of a slideshow
+		previous: function() {
+			return $.vegas( 'slideshow', { step: step-2 } );
+		},
+
 		// Stop slideshow
-		stop: function( settings ) {
+		stop: function() {
 			step = 0;
 			clearInterval( timer );
 
@@ -188,7 +204,7 @@
 		},
 
 		// Pause SlideShow
-		pause: function( settings ) {
+		pause: function() {
 			clearInterval( timer );
 
 			return $.vegas;
