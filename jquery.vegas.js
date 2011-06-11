@@ -96,7 +96,7 @@
                     loaded();
                 }
 
-                $( 'body' ).trigger( 'vegasLoad', [ $current.get(0), step - 1 ] );
+                $( 'body' ).trigger( 'vegasload', [ $current.get(0), step - 1 ] );
                 options.load.apply( $current.get(0) );
             })
             .attr( 'src', options.src );
