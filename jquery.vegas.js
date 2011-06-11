@@ -112,7 +112,7 @@
                 $current = null;
             }
 
-            if ( !what || what == 'overlay') {
+            if ( what == 'overlay') {
                 $( '.vegas-overlay' ).remove();
             }
 
