@@ -32,7 +32,7 @@
         $loading    = $( '<div />' ).addClass( 'vegas-loading' ),
         $current    = $(),
         timer,
-        isPaused    = null,
+        paused    = null,
         backgrounds = [],
         step        = 0,
         methods     = {
@@ -195,12 +195,12 @@
             doSlideshow();
 
             if ( !keepPause ) {
-                isPaused = false;
+                paused = false;
                 
                 $( 'body' ).trigger( 'vegasslideshow', [ $current.get(0), step - 1 ] );
             }
 
-            if ( !isPaused ) {
+            if ( !paused ) {
                 timer = setInterval( doSlideshow, options.delay );
             }
 
@@ -244,7 +244,7 @@
         stop: function() {
             var from = step;
             step = 0;
-            isPaused = null;
+            paused = null;
             clearInterval( timer );
 
             $( 'body' ).trigger( 'vegasstop', [ $current.get(0), from - 1 ] );
@@ -254,7 +254,7 @@
 
         // Pause slideShow
         pause: function() {
-            isPaused = true;
+            paused = true;
             clearInterval( timer );
 
             $( 'body' ).trigger( 'vegaspause', [ $current.get(0), step - 1 ] );
@@ -276,8 +276,8 @@
                 return step - 1;
             }
 
-            if ( what == 'isPaused' ) {
-                return isPaused;
+            if ( what == 'paused' ) {
+                return paused;
             }
         },
         
