@@ -158,7 +158,7 @@
             var options = {
                 step:           step,
                 delay:          5000,
-                preload:        true,
+                preload:        false,
                 backgrounds:    backgrounds
             };
             options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
@@ -287,7 +287,7 @@
                 if ( backgrounds[ i ].src ) {
                     $('<img src="' + backgrounds[ i ].src + '">');                    
                 }
-            } 
+            }
             
             return $.vegas;   
         }
