@@ -30,15 +30,16 @@
     var $background = $( '<img />' ).addClass( 'vegas-background' ),
         $overlay    = $( '<div />' ).addClass( 'vegas-overlay' ),
         $loading    = $( '<div />' ).addClass( 'vegas-loading' ),
-        $current,
+        $current    = $(),
         timer,
-        isPaused,
+        isPaused    = null,
         backgrounds = [],
         step        = 0,
         methods     = {
-
+            
         // Init plugin
         init : function( settings ) {
+            
             var options = {
                 src:        getBackground(),
                 align:      'center',
@@ -56,47 +57,49 @@
 
             $new = $background.clone();
             $new.css( {
-                    'position': 'fixed',
-                    'left':     '0px',
-                    'top':      '0px'
-                })
-                .load( function() {
-                    $( window ).bind( 'resize.vegas', function( e ) {
-                        resize( $new, options );
-                    });
+                'position': 'fixed',
+                'left':     '0px',
+                'top':      '0px'
+            })
+            .load( function() {
+                $( window ).bind( 'resize.vegas', function( e ) {
+                    resize( $new, options );
+                });
 
-                    if ( $current ) {
-                        $current.stop();
-                        $new.hide()
-                            .insertAfter( $current )
-                            .fadeIn( options.fade, function() {
-                                $('.vegas-background')
-                                    .not(this)
-                                        .remove();
-                                $( 'body' ).trigger( 'vegasComplete', [ this, step - 1 ] );
-                                options.complete.apply( $new, [ step - 1 ] );
-                            });
-                    } else {
-                        $new.hide()
-                            .prependTo( 'body' )
-                            .fadeIn( options.fade, function() {
-                                $( 'body' ).trigger( 'vegasComplete', [ this, step - 1 ] );
-                                options.complete.apply( this, [ step - 1 ] );    
-                            });
-                    }
+                if ( $current.is( 'img' ) ) {
+                    
+                    $current.stop();
+  
+                    $new.hide()
+                        .insertAfter( $current )
+                        .fadeIn( options.fade, function() {
+                            $('.vegas-background')
+                                .not(this)
+                                    .remove();
+                            $( 'body' ).trigger( 'vegascomplete', [ this, step - 1 ] );
+                            options.complete.apply( $new, [ step - 1 ] );
+                        });
+                } else {
+                    $new.hide()
+                        .prependTo( 'body' )
+                        .fadeIn( options.fade, function() {
+                            $( 'body' ).trigger( 'vegascomplete', [ this, step - 1 ] );
+                            options.complete.apply( this, [ step - 1 ] );    
+                        });
+                }
 
-                    $current = $new;
+                $current = $new;
 
-                    resize( $current, options );
+                resize( $current, options );
 
-                    if ( options.loading ) {
-                        loaded();
-                    }
+                if ( options.loading ) {
+                    loaded();
+                }
 
-                    $( 'body' ).trigger( 'vegasLoad', [ $current.get(0), step ] );
-                    options.load.apply( $current.get(0) );
-                })
-                .attr( 'src', options.src );
+                $( 'body' ).trigger( 'vegasLoad', [ $current.get(0), step - 1 ] );
+                options.load.apply( $current.get(0) );
+            })
+            .attr( 'src', options.src );
 
             return $.vegas;
         },
@@ -174,7 +177,7 @@
             clearInterval( timer );
 
             if ( !backgrounds.length ) {
-                return;
+                 return $.vegas;
             }
 
             var doSlideshow = function() {
@@ -194,7 +197,7 @@
             if ( !keepPause ) {
                 isPaused = false;
                 
-                $( 'body' ).trigger( 'vegasSlideshow', [ $current.get(0), step - 1 ] );
+                $( 'body' ).trigger( 'vegasslideshow', [ $current.get(0), step - 1 ] );
             }
 
             if ( !isPaused ) {
@@ -210,7 +213,7 @@
             
             $.vegas( 'slideshow', { step: step }, true );
             
-            $( 'body' ).trigger( 'vegasNext', [ $current.get(0), step - 1, from - 1 ] );
+            $( 'body' ).trigger( 'vegasnext', [ $current.get(0), step - 1, from - 1 ] );
             
             return $.vegas;
         },
@@ -221,7 +224,7 @@
             
             $.vegas( 'slideshow', { step: step-2 }, true );
             
-            $( 'body' ).trigger( 'vegasPrevious', [ $current.get(0), step - 1, from - 1 ] );
+            $( 'body' ).trigger( 'vegasprevious', [ $current.get(0), step - 1, from - 1 ] );
             
             return $.vegas;
         },
@@ -232,7 +235,7 @@
             
             $.vegas( 'slideshow', { step: s }, true );
 
-            $( 'body' ).trigger( 'vegasJump', [ $current.get(0), step - 1, from - 1 ] );
+            $( 'body' ).trigger( 'vegasjump', [ $current.get(0), step - 1, from - 1 ] );
             
             return $.vegas;
         },
@@ -244,7 +247,7 @@
             isPaused = null;
             clearInterval( timer );
 
-            $( 'body' ).trigger( 'vegasStop', [ $current.get(0), from - 1 ] );
+            $( 'body' ).trigger( 'vegasstop', [ $current.get(0), from - 1 ] );
 
             return $.vegas;
         },
@@ -254,7 +257,7 @@
             isPaused = true;
             clearInterval( timer );
 
-           $( 'body' ).trigger( 'vegasPause', [ $current.get(0), step - 1 ] );
+            $( 'body' ).trigger( 'vegaspause', [ $current.get(0), step - 1 ] );
 
             return $.vegas;
         },
@@ -284,7 +287,9 @@
                 if ( backgrounds[ i ].src ) {
                     $('<img src="' + backgrounds[ i ].src + '">');                    
                 }
-            }    
+            } 
+            
+            return $.vegas;   
         }
     }
 
