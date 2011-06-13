@@ -202,7 +202,7 @@
             if ( !keepPause ) {
                 paused = false;
                 
-                $( 'body' ).trigger( 'vegasslideshow', [ $current.get(0), step - 1 ] );
+                $( 'body' ).trigger( 'vegasstart', [ $current.get(0), step - 1 ] );
             }
 
             if ( !paused ) {
