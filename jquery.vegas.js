@@ -31,23 +31,23 @@
         $overlay    = $( '<div />' ).addClass( 'vegas-overlay' ),
         $loading    = $( '<div />' ).addClass( 'vegas-loading' ),
         $current    = $(),
-        timer,
-        paused      = null,
+        paused = null,
         backgrounds = [],
-        step        = 0,
-        methods     = {
+        step = 0,
+        timer,
+        methods = {
             
         // Init plugin
         init : function( settings ) {
             
             var options = {
-                src:        getBackground(),
-                align:      'center',
-                valign:     'center',
-                fade:       0,
-                loading:    true,
-                load:       function() {},
-                complete:   function() {}
+                src: getBackground(),
+                align: 'center',
+                valign: 'center',
+                fade: 0,
+                loading: true,
+                load: function() {},
+                complete: function() {}
             }
             $.extend( options, $.vegas.defaults.background, settings );
 
@@ -58,8 +58,8 @@
             $new = $background.clone();
             $new.css( {
                 'position': 'fixed',
-                'left':     '0px',
-                'top':      '0px'
+                'left': '0px',
+                'top': '0px'
             })
             .load( function() {
                 $( window ).bind( 'resize.vegas', function( e ) {
@@ -126,8 +126,8 @@
         // Display the pattern overlay
         overlay: function( settings ) {
             var options = {
-                src:        null,
-                opacity:    null
+                src: null,
+                opacity: null
             };
             $.extend( options, $.vegas.defaults.overlay, settings );
 
@@ -135,13 +135,13 @@
 
             $overlay
                 .css( {
-                    'margin':   '0',
-                    'padding':  '0',
+                    'margin': '0',
+                    'padding': '0',
                     'position': 'fixed',
-                    'left':     '0px',
-                    'top':      '0px',
-                    'width':    '100%',
-                    'height':   '100%'
+                    'left': '0px',
+                    'top': '0px',
+                    'width': '100%',
+                    'height': '100%'
             });
 
             if ( options.src ) {
@@ -160,10 +160,10 @@
         // Start/restart slideshow
         slideshow: function( settings, keepPause ) {
             var options = {
-                step:           step,
-                delay:          5000,
-                preload:        false,
-                backgrounds:    backgrounds
+                step: step,
+                delay: 5000,
+                preload: false,
+                backgrounds: backgrounds
             };
             options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
 
@@ -183,7 +183,7 @@
             clearInterval( timer );
 
             if ( !backgrounds.length ) {
-                 return $.vegas;
+                return $.vegas;
             }
 
             var doSlideshow = function() {
@@ -307,8 +307,8 @@
     // Resize the background
     function resize( $img, settings ) {
         var options =  {
-            align:     'center',
-            valign:    'center'
+            align: 'center',
+            valign: 'center'
         }
         $.extend( options, settings );
 
@@ -323,16 +323,16 @@
             properties;
 
         if ( rw > ri ) {
-            newWidth    = wh / ri;
-            newHeight   = wh;
+            newWidth = wh / ri;
+            newHeight = wh;
         } else {
-            newWidth    = ww;
-            newHeight   = ww * ri;
+            newWidth = ww;
+            newHeight = ww * ri;
         }
 
         properties = {
-            'width':    newWidth + 'px',
-            'height':   newHeight + 'px'
+            'width': newWidth + 'px',
+            'height': newHeight + 'px'
         }
 
         if ( parseInt( options.valign ) != 'NaN' ) {
