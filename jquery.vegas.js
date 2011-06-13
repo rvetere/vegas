@@ -97,10 +97,11 @@
                 }
 
                 $( 'body' ).trigger( 'vegasload', [ $current.get(0), step - 1 ] );
-                options.load.apply( $current.get(0) );
+                options.load.apply( $current.get(0), [ step - 1 ] );
 
                 if ( step ) {
                     $( 'body' ).trigger( 'vegasstep', [ $current.get(0), step - 1 ] );
+                    options.walk.apply( $current.get(0), [ step - 1 ] );
                 }
             })
             .attr( 'src', options.src );
@@ -163,7 +164,8 @@
                 step: step,
                 delay: 5000,
                 preload: false,
-                backgrounds: backgrounds
+                backgrounds: backgrounds,
+                walk: function() {}
             };
             options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
 
@@ -195,7 +197,10 @@
                     step = 0;
                 }
 
-                $.vegas( backgrounds[ step++ ] );
+                var settings = backgrounds[ step++ ];
+                settings.walk = options.walk;
+
+                $.vegas( settings );
             }
             doSlideshow();
 
@@ -404,6 +409,7 @@
             // delay:       int
             // backgrounds: array
             // preload:     bool
+            // walk:        function
         },
         overlay: {
             // src:         string
