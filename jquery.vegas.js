@@ -99,7 +99,7 @@
                 $( 'body' ).trigger( 'vegasload', [ $current.get(0), step - 1 ] );
                 options.load.apply( $current.get(0) );
 				
-				if ( !paused ) {
+				if ( step ) {
 					$( 'body' ).trigger( 'vegasstep', [ $current.get(0), step - 1 ] );	
 				}
             })
@@ -168,7 +168,7 @@
             options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
 
             if ( options.backgrounds != backgrounds ) {
-                if ( !options.step ) {
+                if ( !settings.step ) {
 					options.step = 0;
 				}
                 
@@ -194,7 +194,7 @@
                 if ( step >= backgrounds.length || !backgrounds[ step - 1 ] ) {
                     step = 0;
                 }
-				
+
                 $.vegas( backgrounds[ step++ ] );
             }
             doSlideshow();
@@ -216,9 +216,11 @@
         next: function() {
             var from = step;
             
-            $.vegas( 'slideshow', { step: step }, true );
+            if ( step ) {
+                $.vegas( 'slideshow', { step: step }, true );
             
-            $( 'body' ).trigger( 'vegasnext', [ $current.get(0), step - 1, from - 1 ] );
+                $( 'body' ).trigger( 'vegasnext', [ $current.get(0), step - 1, from - 1 ] );
+            }
             
             return $.vegas;
         },
@@ -227,9 +229,11 @@
         previous: function() {
             var from = step;
             
-            $.vegas( 'slideshow', { step: step-2 }, true );
-            
-            $( 'body' ).trigger( 'vegasprevious', [ $current.get(0), step - 1, from - 1 ] );
+            if ( step ) {
+                $.vegas( 'slideshow', { step: step - 2 }, true );
+
+                $( 'body' ).trigger( 'vegasprevious', [ $current.get(0), step - 1, from - 1 ] );
+            }
             
             return $.vegas;
         },
@@ -238,9 +242,11 @@
         jump: function( s ) {
             var from = step;
             
-            $.vegas( 'slideshow', { step: s }, true );
-
-            $( 'body' ).trigger( 'vegasjump', [ $current.get(0), step - 1, from - 1 ] );
+            if ( step ) {
+                $.vegas( 'slideshow', { step: s }, true );
+            
+                $( 'body' ).trigger( 'vegasjump', [ $current.get(0), step - 1, from - 1 ] );                
+            }
             
             return $.vegas;
         },
