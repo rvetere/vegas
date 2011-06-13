@@ -32,7 +32,7 @@
         $loading    = $( '<div />' ).addClass( 'vegas-loading' ),
         $current    = $(),
         timer,
-        paused    = null,
+        paused      = null,
         backgrounds = [],
         step        = 0,
         methods     = {
@@ -98,6 +98,10 @@
 
                 $( 'body' ).trigger( 'vegasload', [ $current.get(0), step - 1 ] );
                 options.load.apply( $current.get(0) );
+				
+				if ( !paused ) {
+					$( 'body' ).trigger( 'vegasstep', [ $current.get(0), step - 1 ] );	
+				}
             })
             .attr( 'src', options.src );
 
@@ -164,7 +168,9 @@
             options = $.extend( {}, $.vegas.defaults.slideshow, options, settings );
 
             if ( options.backgrounds != backgrounds ) {
-                options.step = 0;
+                if ( !options.step ) {
+					options.step = 0;
+				}
                 
                 if ( options.preload ) {
                     $.vegas( 'preload', options.backgrounds )
@@ -188,10 +194,9 @@
                 if ( step >= backgrounds.length || !backgrounds[ step - 1 ] ) {
                     step = 0;
                 }
-
+				
                 $.vegas( backgrounds[ step++ ] );
             }
-
             doSlideshow();
 
             if ( !keepPause ) {
@@ -207,7 +212,7 @@
             return $.vegas;
         },
 
-        // Next background in the current slideshow
+        // Jump to the next background in the current slideshow
         next: function() {
             var from = step;
             
@@ -218,7 +223,7 @@
             return $.vegas;
         },
 
-        // Previous background in the current slideshow
+        // Jump to the previous background in the current slideshow
         previous: function() {
             var from = step;
             
