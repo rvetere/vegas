@@ -95,7 +95,23 @@
 
                 $current = $new;
 
-                resize( $current, options );
+                /**
+                 * Wrong-Initial-Dimension-Fix
+                 * @author Remo Vetere
+                 *
+                 * Logical fix for initial resize operation -> if the image returns 0 on getWidth(), the resize logic
+                 * is screwed up -> and on this line of the code, it will always return 0. So, we simply make a wait-for-element
+                 * logic to resize imediately the image is successfully inserted into the dom -> a time value that is extremely
+                 * different, depending on the platform and the browser-engine.
+                 */
+                var waitForElement = function() {
+                    if ($current.width() == 0) {
+                        setTimeout(waitForElement, 25);
+                    } else {
+                        resize( $current, options );
+                    }
+                };
+                waitForElement();
 
                 if ( options.loading ) {
                     loaded();
