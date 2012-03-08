@@ -97,7 +97,6 @@
 
                 /**
                  * Wrong-Initial-Dimension-Fix
-                 * @author Remo Vetere
                  *
                  * Logical fix for initial resize operation -> if the image returns 0 on getWidth(), the resize logic
                  * is screwed up -> and on this line of the code, it will always return 0. So, we simply make a wait-for-element
